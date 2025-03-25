@@ -1,5 +1,7 @@
 # Guerilla Warfare Agent-Based Model
 
+![alt text](simulation_example.png)
+
 I did a little while ago a research work on the modeling of a guerilla warfare. The paper I ended up coming with is a theoretical approach to something that can be modeled by ABM. What I am quite interested in is verifying the classical Lanchester equations that are supposed to rule this type of battle, as well as the modified asymmetric model (Deitchman adaptation).
 
 I chose to use the [mesa framework](https://github.com/projectmesa/mesa) to implement it, as it is handy and has a lot of interesting features that can be of use for this project.

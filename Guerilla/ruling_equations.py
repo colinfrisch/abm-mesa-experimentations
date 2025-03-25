@@ -17,9 +17,8 @@ def calculate_Lanchester(initial_army_personnel, step, fire_power, sight):
     Number of remaining soldiers at the given time step
     """
     
-    # Calculate firing rate based on fire_power and sight
     # Combine fire_power with sight to create a more nuanced firing effectiveness
-    g = fire_power * sight / 280  # Using the approximation from the document
+    g = fire_power * sight / 280 
     
     # Use the face-to-face battle model equation
     # x(t) = x0 * cosh(sqrt(ag)t) - (sqrt(g/a) * enemy_x0) * sinh(sqrt(ag)t)
@@ -28,7 +27,7 @@ def calculate_Lanchester(initial_army_personnel, step, fire_power, sight):
     # Assume symmetrical battle with equal initial conditions
     remaining_soldiers = (
         initial_army_personnel * math.cosh(sqrt_ag * step) - 
-        initial_army_personnel * math.sinh(sqrt_ag * step)
+        2*initial_army_personnel * math.sinh(sqrt_ag * step)
     )
     
     # Ensure non-negative result
@@ -54,7 +53,7 @@ def calculate_Deitchman(initial_army_personnel, step, fire_power, sight, side='A
     # g represents the targeted firing
     
     # Approximation of firing effectiveness based on document's calculations
-    if side == 'Army':
+    if side == 'Guerilla':
         # Regular army firing randomly (lower accuracy)
         g = fire_power * sight / 280  # base firing rate
         A = 1.06e-5  # random firing coefficient from the document

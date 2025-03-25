@@ -43,13 +43,13 @@ model_params = {
         "value": 42,
         "label": "Random Seed",
     },
-
-    "starting_personnel_army": Slider("Initial personnel for army", 20, 1, 50),
-    "army_fire_power": Slider("Fire power for the army", 0.1, 0, 1, 0.1),
-    "army_sight": Slider("How far can the army soliders see", 2, 1, 5),
-    "starting_personnel_guerilla": Slider("Initial personnel for guerilla", 10, 1, 50),
-    "guerilla_fire_power": Slider("Fire power for the guerilla", 0.1, 0, 1, 0.1),
-    "guerilla_sight": Slider("How far can the guerilla soliders see", 2, 1, 5),
+    "situation": Slider("Situation (0 = regular, 1=Ambush)", 0, 0, 1, 1),
+    "starting_personnel_army": Slider("Initial personnel for army", 100, 1, 150),
+    "army_fire_power": Slider("Fire power for the army", 0.5, 0, 1, 0.1),
+    "army_sight": Slider("Army sight range", 2, 1, 5),
+    "starting_personnel_guerilla": Slider("Initial personnel for guerilla", 50, 1, 150),
+    "guerilla_fire_power": Slider("Fire power for the guerilla", 0.5, 0, 1, 0.1),
+    "guerilla_sight": Slider("Guerilla sight range", 2, 1, 5),
 
 }
 

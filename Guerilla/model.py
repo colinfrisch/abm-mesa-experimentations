@@ -32,7 +32,7 @@ class GuerillaModel(Model):
         self,
         width=20,
         height=20,
-        situation="Classic",
+        situation=0,
         starting_personnel_army=100,
         starting_personnel_guerilla=50,
         army_fire_power=0.5,
@@ -61,7 +61,7 @@ class GuerillaModel(Model):
         super().__init__(seed=seed)
         self.simulator = simulator
         self.simulator.setup(self)
-        self.situation = situation
+        self.situation = "Classic" if situation == 0 else "Ambush"
         self.calculate_Lanchester = calculate_Lanchester
         self.calculate_Deitchman = calculate_Deitchman
 
@@ -72,7 +72,7 @@ class GuerillaModel(Model):
         # Create grid using experimental cell space
         self.grid = OrthogonalVonNeumannGrid(
             [self.height, self.width],
-            torus=True,
+            torus=False,
             capacity=math.inf,
             random=self.random,
         )
