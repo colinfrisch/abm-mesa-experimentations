@@ -1,4 +1,4 @@
-mesa
-matplotlib
-pandas
-numpy
+mesa 
+solara 
+networkx 
+altair

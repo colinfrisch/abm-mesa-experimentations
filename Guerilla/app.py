@@ -64,22 +64,37 @@ def post_process_lines(ax):
     ax.legend(loc="center left", bbox_to_anchor=(1, 0.9))
 
 
+
 space_component = make_space_component(
     model_portrayal, draw_grid=False, post_process=post_process_space
 )
-lineplot_component = make_plot_component(
-    {"ArmySoldiers": "tab:orange", "GuerillaSoldiers": "tab:cyan","TotalSoldiers":"tab:green"},
-    post_process=post_process_lines,
-)
+
 
 simulator = ABMSimulator()
 model = GuerillaModel(simulator=simulator)
 
+if model.situation == "Classic":
+    ruling_equation = "LanchesterEquation"
+else:
+    ruling_equation = "DeitchmanEquation"
+
+army_lineplot_component = make_plot_component(
+    {"ArmySoldiers": "tab:red", f"Army{ruling_equation}":"tab:orange"},
+    post_process=post_process_lines,
+)
+guerilla_lineplot_component = make_plot_component(
+    {"GuerillaSoldiers": "tab:blue",f"Guerilla{ruling_equation}":"tab:orange"},
+    post_process=post_process_lines,
+)
+
+
+
+
 page = SolaraViz(
     model,
-    components=[space_component, lineplot_component],
+    components=[space_component, army_lineplot_component,guerilla_lineplot_component],
     model_params=model_params,
     name="Guerrilla Warfare",
     simulator=simulator,
 )
-page  # noqa
+page 

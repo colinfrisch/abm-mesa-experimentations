@@ -6,6 +6,7 @@ import math
 import os
 import sys
 from agents import SoldierAgent
+from ruling_equations import calculate_Lanchester, calculate_Deitchman
 
 mesa_path = os.path.abspath("/Users/colinfrisch/Desktop/mesa")
 if mesa_path not in sys.path:
@@ -61,6 +62,8 @@ class GuerillaModel(Model):
         self.simulator = simulator
         self.simulator.setup(self)
         self.situation = situation
+        self.calculate_Lanchester = calculate_Lanchester
+        self.calculate_Deitchman = calculate_Deitchman
 
         # Initialize model parameters
         self.height = height
@@ -79,6 +82,25 @@ class GuerillaModel(Model):
             "TotalSoldiers" : lambda m: len(m.agents_by_type[SoldierAgent]),
             "ArmySoldiers": lambda m: len([agent for agent in m.agents if agent.side == "Army"]),
             "GuerillaSoldiers": lambda m: len([agent for agent in m.agents if agent.side == "Guerilla"]),
+            "ArmyLanchesterEquation": lambda m: m.calculate_Lanchester(initial_army_personnel = starting_personnel_army, 
+                                                                        step = m.steps, 
+                                                                        fire_power = army_fire_power, 
+                                                                        sight = army_sight),
+            "GuerillaLanchesterEquation": lambda m: m.calculate_Lanchester(initial_army_personnel = starting_personnel_guerilla,
+                                                                        step = m.steps,
+                                                                        fire_power = guerilla_fire_power,
+                                                                        sight = guerilla_sight),
+            "ArmyDeitchmanEquation": lambda m: m.calculate_Deitchman(initial_army_personnel = starting_personnel_army,
+                                                                        step = m.steps,
+                                                                        fire_power = army_fire_power,
+                                                                        sight = army_sight,
+                                                                        side = "ambushed"),
+            "GuerillaDeitchmanEquation": lambda m: m.calculate_Deitchman(initial_army_personnel = starting_personnel_guerilla,
+                                                                        step = m.steps,
+                                                                        fire_power = guerilla_fire_power,
+                                                                        sight = guerilla_sight,
+                                                                        side = "ambusher"),
+    
         }
 
         self.datacollector = DataCollector(model_reporters)

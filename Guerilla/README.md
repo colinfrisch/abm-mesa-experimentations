@@ -4,14 +4,13 @@ I did a little while ago a research work on the modeling of a guerilla warfare. 
 
 I chose to use the [mesa framework](https://github.com/projectmesa/mesa) to implement it, as it is handy and has a lot of interesting features that can be of use for this project.
 
-
-## Overview
-
-The model simulates combat between two forces: a conventional Army and a Guerilla force. It supports two engagement scenarios:
+Overall, the model simulates combat between two forces: a conventional Army and a Guerilla force. It supports two engagement scenarios:
 - **Classic warfare**: Forces face each other in traditional battle lines
 - **Ambush**: Guerilla forces encircle and attack the conventional forces
 
-## Table of Contents
+
+
+#### Table of content
 - [Installation and Usage](#installation-and-usage)
 - [Theoretical Background](#theoretical-background)
 - [Model and agent behavior](#Model-and-agent-behavior)
@@ -22,24 +21,24 @@ The model simulates combat between two forces: a conventional Army and a Guerill
 ## Installation and Usage
 
 1. Ensure you have Mesa installed + download the github repo:
-    ```bash
+```bash
    make install           
-    ```
+```
 
 the structure for your folders should be the following
    
-   ```
+```
    ├── ABM_mesa_models/
    │    └── Guerilla/
    │        └── ...
    ├── mesa/
 
-   ```
+```
 
 2. Run the application:
-    ```bash
-    solara run app.py #or make run
-    ```
+```bash
+   solara run app.py #or make run
+```
 
 3. Adjust parameters via the web interface sliders:
    - Set initial force sizes
@@ -67,28 +66,28 @@ The objective of this model is to implement and compare two mathematical warfare
 
 Although I set the slider to a wider range of choices for experimentations, I recommand to choose the parameters as described in here for better result.
 
+
+
 This is based on my previous work on [Modeling Guerilla Warfare](Guerilla_Reaseach_Paper_ColinFRISCH.pdf), and documentation include Lanchester and Deitchman research papers (cf. references).
 
 ## Model and agent behavior
 
-### Classic Warfare
+#### Classic Warfare
 - Forces are placed on opposite sides of the grid
 - Both sides have equal visibility and engagement capabilities
 - Outcome typically favors the larger or more powerful army
 
-### Ambush
+#### Ambush
 - Army forces are placed in the center of the grid
 - Guerilla forces are placed around the perimeter
 - This scenario tests the asymmetric warfare model where smaller forces can prevail through tactical advantage (adjusted parameters)
 
-### Agent Behavior
+#### Agent Behavior
 
 Each soldier agent follows a simple decision process:
 1. Find the closest enemy
-2. If enemy is within sight range:
-   - Shoot at the enemy and kill him with the probability defined by fire_power
-3. If no enemy is within sight range:
-   - Move toward the closest enemy 
+2. If enemy is within sight range : Shoot at the enemy and kill him with the probability defined by fire_power
+3. If no enemy is within sight range : Move toward the closest enemy 
 
 Movement uses a Manhattan distance calculation to determine the closest enemy, followed by a directional vector to choose the best neighboring cell for movement.
 
