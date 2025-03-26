@@ -16,15 +16,17 @@ The environment is a continuous grid representing the terrain with scattered foo
 
 ## Unfolding
 
-Ants explore the grid randomly.​ 
+The rules of this simulation are made to test the memory module.
+
+By default, ants explore the grid randomly.​ Food is eaten when enough (5 by default) ants are gathered around it.
 
 ![base situation](img/ant1.png)
 
-Upon finding food, the ant :
-1. Stores the location in their memory and goes to the colony - does not eat the food.
-2. On the way back, transmits the information to all ants physically close to them.
-3. When arrived in the colony, they go back to the food source, continuing the transmition
-4. When arrived back at the food source : ant stays there, continues transmitting and waits there until enough ants are present and the food is eaten
+Upon finding food, the ant (we'll call it Antony) stores the location in their memory, goes to the colony, and comes back to the food following these simple steps :
+1. On the way back, the ant transmits the information to all ants physically close to them
+> The said ants that are receiving the information head directly to the food and gather all the ants on their path to accompany them to food source
+2. When arrived in the colony, Antony heads back to the food source, continuing the transmition of the information to other close by Ants
+3. When arrived back at the food source, Antony stays there along with the other ants, as continues transmitting and waiting until enough ants are present and the food is eaten
 
 
 ![alt text](img/ant2.png) ![alt text](img/ant4.png) ![alt text](img/ant5.png) ![alt text](img/ant6.png)
@@ -42,5 +44,5 @@ Non tested : memory.recall(entry_id)
 
 ## Next steps
 
-- Ants can recieve many communications that indicate the position of food and directly go from a food to another
+- Ants can transmit more complex information about the food and adapt
 
