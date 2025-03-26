@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 from agents import SoldierAgent
 from model import GuerillaModel
 

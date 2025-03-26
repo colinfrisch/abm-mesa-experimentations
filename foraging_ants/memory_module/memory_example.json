@@ -1,0 +1,23 @@
+{
+    "entry_id1" : {
+        "entry_step" : 1,
+        "entry_type" : "position",
+        "entry_content" : [1,2]
+    },
+    "entry_id2" : {
+        "entry_step" : 2,
+        "entry_type" : "infection",
+        "entry_content" : true
+    },
+    "entry_id3" : {
+        "entry_step" : 3,
+        "entry_type" : "health",
+        "entry_content" : 12
+    },
+    "entry_id4" : {
+        "external_agent_id" : "external_agent_id",
+        "entry_step" : 4,
+        "entry_type" : "dialog",
+        "entry_content" : "Hello, I feel sick like a sheep"
+    }
+}
