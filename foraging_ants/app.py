@@ -32,7 +32,7 @@ def agent_portrayal(agent):
         rounded_deg = round(deg / 10) * 10 % 360
         
         portrayal["marker"] = MARKER_CACHE[rounded_deg]
-        portrayal["size"] = 20
+        portrayal["size"] = 30
         
         if agent.mode == "explore":
             # Black if exploring
@@ -53,7 +53,7 @@ def agent_portrayal(agent):
             
     elif isinstance(agent, Food):
         portrayal["marker"] = MARKER_CACHE["food"]
-        portrayal["size"] = 30
+        portrayal["size"] = 50
         portrayal["color"] = "green"
         portrayal["filled"] = True
         portrayal["layer"] = 0
