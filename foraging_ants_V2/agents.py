@@ -3,8 +3,14 @@ Mesa implementation of Foraging Ants model: Agents module.
 """
 
 import numpy as np
+import sys
 import os
-from memory_module.memory import Memory
+
+memory_path = os.path.abspath("/Users/colinfrisch/Desktop/ABM_mesa_models")
+if memory_path not in sys.path:
+    sys.path.insert(0, memory_path)
+
+from memory_module.memory_V2 import Memory
 import sys
 
 sys.path.insert(0, os.path.abspath("../../mesa"))
@@ -28,7 +34,7 @@ class ForagingAnt(ContinuousSpaceAgent):
         initial_position=(0, 0),
         speed=1,
         direction=(1, 1),
-        range_of_communication=10,
+        range_of_communication=2,
         memory_capacity=10
     ):
         """Create a new Ant agent.
@@ -49,7 +55,7 @@ class ForagingAnt(ContinuousSpaceAgent):
         self.direction = direction
         self.range_of_communication = range_of_communication
         self.angle = 0.0  # represents the angle at which the ant is moving
-        self.memory = Memory(model, agent_id=self.unique_id, capacity=memory_capacity)
+        self.memory = Memory(agent=self, model=model, stm_capacity=memory_capacity)
         
         # Ant state
         self.mode = "explore"  # Modes: "explore", "return_to_colony", "go_to_food"
@@ -65,13 +71,21 @@ class ForagingAnt(ContinuousSpaceAgent):
 
             if food_here is not None:
                 self.mode = "return_to_colony"
-                self.memory.remember(entry_content=food_here, entry_type="food")
+                self.memory.remember_short_term(model=self.model, entry_content=food_here, entry_type="food")
                 self.target = self.model.colony_position
             
-            elif self.memory.get_by_type("food") != []:
+            elif self.memory.get_by_type("food"):
                 self.mode = "go_to_food"
-                latest_food = self.memory.memory_storage[self.memory.get_by_type("food")[-1]]["entry_content"]
-                self.target = latest_food
+                food_entries = self.memory.get_by_type("food")
+                
+                if food_entries:  # Make sure we have at least one entry
+                    if isinstance(food_entries, list):
+                        if food_entries:  # Check if list is not empty
+                            latest_food = food_entries[-1].entry_content
+                            self.target = latest_food
+                    else:  # It's a single MemoryEntry
+                        latest_food = food_entries.entry_content
+                        self.target = latest_food
 
         else :
             self.communicate()
@@ -106,13 +120,15 @@ class ForagingAnt(ContinuousSpaceAgent):
                 self.position, self.range_of_communication)[0]
                 if isinstance(ant_agent, ForagingAnt) and ant_agent.unique_id != self.unique_id and ant_agent.mode == "explore"]
             
-            
             # Share food location with nearby ants. An ant can only have one food memory at a time.
             food_memories_ids = self.memory.get_by_type("food")
-            if food_memories_ids != [] and nearby_available_ants != []:
+            # Handle both potential cases - single MemoryEntry or list of MemoryEntries
+            if food_memories_ids and nearby_available_ants != []:
+                if isinstance(food_memories_ids, list) and food_memories_ids:
+                    entry = food_memories_ids[0]
+
                 for external_ant in nearby_available_ants:
-                    #///!!!\\\ remove useless variable
-                    new_entry_key=self.memory.tell_to(entry_id = food_memories_ids[0],external_agent = external_ant)
+                    self.memory.communicate(entry=entry, external_agent=external_ant)
 
 
     def move(self):
@@ -152,14 +168,15 @@ class ForagingAnt(ContinuousSpaceAgent):
                     if self.mode == "return_to_colony":
                         # If we have memory of food, go to it, else (re)start exploring
 
-                        if food_memories_index:
-                            latest_food = self.memory.memory_storage[food_memories_index[-1]]["entry_content"]
+                        if food_memories_index:  # Check if list is not empty
+                            latest_food = food_memories_index[-1].entry_content
                             self.target = latest_food
                             self.mode = "go_to_food"
                         else:
                             self.mode = "explore"
                             self.target = None
-                    
+
+
                     elif self.mode == "go_to_food" and self.near_target():
                         # If near food target, switch to exploring (which will find the food)
 
@@ -169,8 +186,9 @@ class ForagingAnt(ContinuousSpaceAgent):
 
                         if not nearby_food: #back to exploring, and forget previous food memories
                             self.mode = "explore"
-                            for food_memory in food_memories_index:
-                                self.memory.forget(food_memory)
+                            if food_memories_index:
+                                    self.memory.short_term.clear()
+                                
                             
         
         # Move the agent
@@ -207,6 +225,8 @@ class Food(ContinuousSpaceAgent):
         self.position = position
         self.ants_needed = ants_needed
         self.neighbors = []
+        self.space = space
+        self.model = model
 
     def step(self):
         """Update the list of neighbors for visualization purposes."""
@@ -217,3 +237,5 @@ class Food(ContinuousSpaceAgent):
             # If enough ants, remove the food and spawn a new one
             self.remove()
             self.model.food_collected +=1
+
+

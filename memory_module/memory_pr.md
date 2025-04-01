@@ -1,23 +1,24 @@
 # Memory PR upgrade
 
-## Summary
+## About the upgrade
 
-Switching to a object format for optimized storage : MemoryEntry is now an object. One of the perks of using an object is not being obligated to have a uniqueID creation module as an object already has an intrinsic uniqueid ```id(my_object)```. Python is indeed a cool language.
-```id(my_object)```
+Switching to a object format for optimized storage : MemoryEntry is now an object. One of the perks of using an object is not being obligated to have a uniqueID creation module as an object already has an intrinsic uniqueid ```id(my_object)```. It saves storage space as well as lines of code.
 
-Characteristics for ShortTermMemory
+##### ShortTermMemory : more memory-efficient and reactive (efficient store and pop functionality)
 - Holds fixed number of recent MemoryEntry objects (automatic removing with dque)
 - Optimized for quick retrieval of recent interactions similar to the previous proposition : ```get()```, ```get_by_entry_type()```, etc.
 - Can be cleared/reset when an agent session ends
 
-Characteristics for ShortTermMemory
+##### LongTermMemory : more computational-efficient (efficient navigation)
 - Hash map storage for better organization 
 - Can be searched (soon, still working on it... I'd greatly appreciate your feedbacks and ideas)
 
+
+##### Justification of memory transfering
 ```tell_to()``` feature still here implemented directly in the memory (yay), but rename it ```communicate()``` to be more explicit
+I see this as "communicating in general is just a way to make a memory of something (like a sentence) and transmitting it to another being". I understand it's unusual, but if the memory module works well, it could mean opening agent communication without building other complex modules. I'm very open to discussion, so please tell me if you have any suggestions regarding this way of doing things !
 
-
-A couple of examples of the structure of the new memory
+##### A couple of examples of the structure of the new memory
 
 
 ```python
@@ -87,7 +88,7 @@ agent.memory.forget(position_entry_id)
 ## What I want to do next 
 
 
-I would like to transform get_by_entry_type into a more general ```search()``` method looking like this :
+- I would like to transform get_by_entry_type into a more general ```search()``` method looking like this :
 
 ```python
 def search(self, query: str = None, entry_type: List[str] = None, 
@@ -104,3 +105,5 @@ def search(self, query: str = None, entry_type: List[str] = None,
     """
     return
 ```
+
+- Mabe serialization methods could also be useful directly in short term and long term memory (```from_dict()```, ```to_dict()```)
