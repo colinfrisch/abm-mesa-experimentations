@@ -5,15 +5,18 @@ Then objective is to implement a very simple and efficient system that can be us
 for any kind of information (an entry). The user defines the capacity of the memory chooses the format
 of the entries, which allows for a greater flexibility. 
 
-Features:
+Key Features:
 
 - Capacity-based short-term memory, with a FIFO system
+- Computationaly-efficient long term memory
 - Efficient storage and retrieval of entries
 - Support for different entry_types of entries
-- Possibility to send entries to other agents
+- Possibility to send entries to other agents (communication)
 
-For now, the module contains only one main component:
-- Memory: A class representing the memory of an agent
+The module now contains four main component:
+- Memory: The operating class for managing ShortTermMemory and LongTermMemory
+- ShortTermMemory more memory-efficient and reactive (efficient store and pop functionality)
+- LongTermMemory : more computational-efficient (efficient navigation)
 
 """
 
