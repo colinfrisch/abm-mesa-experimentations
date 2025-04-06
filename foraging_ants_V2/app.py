@@ -5,7 +5,7 @@ from matplotlib.markers import MarkerStyle
 import matplotlib.colors as mcolors
 
 from model import ForagingAntsModel
-from agents import ForagingAnt, Food
+from foraging_ants_V2.agents import ForagingAnt, Food
 
 sys.path.insert(0, os.path.abspath("../../mesa"))
 

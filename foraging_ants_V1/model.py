@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath("../../mesa"))
 import numpy as np
 
 from mesa import Model
-from agents import ForagingAnt, Food
+from foraging_ants_V1.agents import ForagingAnt, Food
 from mesa.experimental.continuous_space import ContinuousSpace
 
 class ForagingAntsModel(Model):

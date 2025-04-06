@@ -1,8 +1,8 @@
 import os
 import sys
 import argparse
-from agents import SoldierAgent
-from model import GuerillaModel
+from guerilla.agents import SoldierAgent
+from guerilla.model import GuerillaModel
 
 mesa_path = os.path.abspath("/Users/colinfrisch/Desktop/mesa")
 if mesa_path not in sys.path:

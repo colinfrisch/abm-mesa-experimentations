@@ -5,8 +5,8 @@ Guerilla prediction model. Made to verify the Square Law (Lanchester) and modifi
 import math
 import os
 import sys
-from agents import SoldierAgent
-from ruling_equations import calculate_Lanchester, calculate_Deitchman
+from guerilla.agents import SoldierAgent
+from guerilla.ruling_equations import calculate_Lanchester, calculate_Deitchman
 
 mesa_path = os.path.abspath("/Users/colinfrisch/Desktop/mesa")
 if mesa_path not in sys.path:
