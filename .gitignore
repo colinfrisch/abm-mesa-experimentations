@@ -1,5 +1,9 @@
-__pycache__/
+# Extensions
 .pyc
 .DS_Store
-
 .excalidraw
+
+# Folders
+__pycache__/
+
+# Files
