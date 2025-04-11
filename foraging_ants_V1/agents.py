@@ -4,10 +4,13 @@ Mesa implementation of Foraging Ants model: Agents module.
 
 import numpy as np
 import os
-from memory_module.memory_V1 import Memory
 import sys
 
-sys.path.insert(0, os.path.abspath("../../mesa"))
+sys.path.insert(0, os.path.abspath("../"))
+
+from memory_module.memory_V1 import Memory
+
+sys.path.insert(0, os.path.abspath("../mesa"))
 
 from mesa.experimental.continuous_space import ContinuousSpaceAgent
 
@@ -134,6 +137,8 @@ class ForagingAnt(ContinuousSpaceAgent):
 
 
         elif self.mode in ["return_to_colony", "go_to_food"]:
+
+            #print(1/0) # Debugging line: error ---------------------------------------------------------------------------------------------------------------------------------------------
             if self.target is not None:
                 # Move towards target (colony or food)
                 vector_to_target = np.array(self.target) - np.array(self.position)

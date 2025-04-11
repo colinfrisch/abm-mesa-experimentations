@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from matplotlib.markers import MarkerStyle
 import matplotlib.colors as mcolors
 
-from foraging_ants_V1.model import ForagingAntsModel
-from foraging_ants_V1.agents import ForagingAnt, Food
+from model import ForagingAntsModel
+from agents import ForagingAnt, Food
 
 sys.path.insert(0, os.path.abspath("../../mesa"))
 
