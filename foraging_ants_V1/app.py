@@ -139,4 +139,5 @@ page = SolaraViz(
     model_params=model_params,
     name="Foraging Ants Model",
 )
+
 page  # noqa

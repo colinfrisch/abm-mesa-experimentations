@@ -138,7 +138,7 @@ class ForagingAnt(ContinuousSpaceAgent):
 
         elif self.mode in ["return_to_colony", "go_to_food"]:
 
-            #print(1/0) # Debugging line: error ---------------------------------------------------------------------------------------------------------------------------------------------
+            print(1/0) # Debugging line: error ---------------------------------------------------------------------------------------------------------------------------------------------
             if self.target is not None:
                 # Move towards target (colony or food)
                 vector_to_target = np.array(self.target) - np.array(self.position)
