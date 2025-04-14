@@ -16,6 +16,7 @@ The global idea is to model how the imune system can struggle against new virus 
    - Otherwise, the virus may defeat the antibody, causing it to lose health or become inactive temporarily.
 4. **Duplication**: Antibodies and viruses can duplicate according to their duplication rate.
 
+
 ![](virus_antibody.png)
 
 ## Usage
