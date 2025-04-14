@@ -190,32 +190,35 @@ class AntibodyAgent(ContinuousSpaceAgent):
             if new_pos is not None and self is not None:
                 self.position = new_pos
         except Exception as e:
-            print(e, self.unique_id)
+            #print(e, self.unique_id)
             return
         
     def engage_virus(self,virus_to_engage) -> str:
         """if the antibody has the DNA info of the virus stored (in st or lt memory), the antibody wins, else the virus wins"""
             # First check if the virus still exists
-        if virus_to_engage not in self.model.agents:
+        virus_to_engage_dna = copy.deepcopy(virus_to_engage.dna)
+        
+        if virus_to_engage not in self.model.agents or virus_to_engage_dna is None:
             self.target = None
             return 'no_target' 
 
-        virus_to_engage_dna = copy.deepcopy(virus_to_engage.dna)
+
         if virus_to_engage_dna in self.st_memory or virus_to_engage_dna in self.lt_memory : # antibody wins and kills the virus
-            print('killed virus', virus_to_engage_dna, self.st_memory, self.lt_memory, self.health)
+            #print('killed virus', virus_to_engage_dna, self.st_memory, self.lt_memory, self.health)
             virus_to_engage.remove()
             self.target = None
             return 'win'
 
         else : # ko for a few steps (can't move) AND stores virus dna in st+lt but if already has low health => dies
-            print('beaten', self.health)
+            #print('beaten', self.health)
             self.health -= 1
-            print(self.health)
+            #print(self.health)
 
             if self.health == 0:
                 self.remove()
                 self.model.schedule.remove(self)
                 return 'dead'
+            
             
             self.st_memory.append(virus_to_engage_dna)
             self.lt_memory.append(virus_to_engage_dna)
