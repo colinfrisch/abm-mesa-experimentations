@@ -24,3 +24,5 @@ After cloning the repo and installing mesa on pip, run the application with :
 ```bash
     solara run app.py
 ```
+
+<img width="1501" alt="Screenshot 2025-04-14 at 16 17 21" src="https://github.com/user-attachments/assets/bd8a64b5-a065-419f-ab13-c822d26ce5b3" />
