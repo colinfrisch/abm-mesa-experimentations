@@ -1,6 +1,6 @@
 import os
 import sys
-import matplotlib.pyplot as plt
+import weakref
 from matplotlib.markers import MarkerStyle
 
 from model import VirusAntibodyModel
@@ -28,13 +28,18 @@ def agent_portrayal(agent):
     if isinstance(agent, AntibodyAgent):
         portrayal["marker"] = MARKER_CACHE["antibody"]
         portrayal["size"] = 30
+
+        if isinstance(agent.target, weakref.ReferenceType):
+            target_obj = agent.target()   # dereference the weakref
+        else:
+            target_obj = agent.target 
         
-        if agent.target == agent :
+        if target_obj == agent :
             # gray if ko
             portrayal["color"] = "gray"
             portrayal["layer"] = 2
         
-        elif agent.target == None :
+        elif target_obj == None :
             # Blue if moving
             portrayal["color"] = "blue"
             portrayal["layer"] = 1
