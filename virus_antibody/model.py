@@ -105,7 +105,7 @@ class VirusAntibodyModel(Model):
         # Create and place the Antibody agents
         antibodies_positions = self.rng.random(size=(self.initial_antibody, 2)) * np.array(self.space.size)
         directions = self.rng.uniform(-1, 1, size=(self.initial_antibody, 2))
-        AntibodyAgent.create_agents(
+        self.antibodies_set = AntibodyAgent.create_agents(
             self,
             self.initial_antibody,
             self.space,
@@ -122,7 +122,7 @@ class VirusAntibodyModel(Model):
         viruses_positions = self.rng.random(size=(self.initial_viruses, 2)) * np.array(self.space.size)
         directions = self.rng.uniform(-1, 1, size=(self.initial_viruses, 2))
         
-        VirusAgent.create_agents(
+        self.viruses_set = VirusAgent.create_agents(
             self,
             self.initial_viruses,
             self.space,

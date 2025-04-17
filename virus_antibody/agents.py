@@ -26,7 +26,7 @@ class AntibodyAgent(ContinuousSpaceAgent):
         duplication_rate,
         ko_timeout,
         memory_capacity,
-        initial_position=(0, 0),
+        initial_position = (0, 0),
         direction=(1, 1),        
     ):
         """Create a new Antibody agent.
@@ -85,24 +85,24 @@ class AntibodyAgent(ContinuousSpaceAgent):
     
 
     def duplicate(self):
-        duplicate = AntibodyAgent.create_agents(
+        duplicate = AntibodyAgent(
             self.model, 
-            1,
             self.space,
-            initial_position = self.position,
-            direction=(1, 1),
             sight_range = self.sight_range,
             memory_capacity=self.memory_capacity,
             duplication_rate = self.duplication_rate,
             ko_timeout = self.ko_timeout
-            )[0]
+            )
+        duplicate.position = self.position
         
-        duplicate.st_memory = deque([item for item in self.st_memory])
-        duplicate.lt_memory = [item for item in self.st_memory]
+        self.model.antibodies_set.add(duplicate)
+        
+        # Only copy non-empty items from memory
+        duplicate.st_memory = deque([item for item in self.st_memory if item])
+        duplicate.lt_memory = [item for item in self.lt_memory if item]
 
         duplicate.target = None
         duplicate.ko_steps_left = 0
-        print('duplicated antibody', duplicate.st_memory)
     
 
 
@@ -133,15 +133,19 @@ class AntibodyAgent(ContinuousSpaceAgent):
             return False
         
         for external_antibody in nearby_antibodies:
-            external_antibody.st_memory = deque([[item 
-                                                for item 
-                                                in self.st_memory 
-                                                if item not in external_antibody.lt_memory]])
+            # Share memory items that aren't already in external antibody's long-term memory
+            # Don't add nested empty lists
+            memory_to_share = [item for item in self.st_memory 
+                              if item and item not in external_antibody.lt_memory]
             
-            external_antibody.lt_memory = external_antibody.lt_memory + [item 
-                                                                         for item 
-                                                                         in self.st_memory 
-                                                                         if item not in external_antibody.lt_memory]
+            if memory_to_share:  # Only update if there's something to share
+                external_antibody.st_memory.extend(memory_to_share)
+                external_antibody.lt_memory.extend(memory_to_share)
+                
+                # Keep memory within capacity
+                while len(external_antibody.st_memory) > self.memory_capacity:
+                    external_antibody.st_memory.popleft()
+        
         return True
 
 
@@ -152,7 +156,8 @@ class AntibodyAgent(ContinuousSpaceAgent):
         - virus as target, move towards it
         - self as target, stays idle (ko)
         """
-
+        if self is None :
+            return
         new_pos = None
 
         if self.target == self : # the antibody fought a virus and lost, but he's still alive. So he's unable to move for a few steps
@@ -182,6 +187,7 @@ class AntibodyAgent(ContinuousSpaceAgent):
                 return
         
         else: # The target is not in the space anymore (it was killed by the antibody)
+            #print('target space/taget : ', self.target.space,self.target)
             self.target = None
             return
 
@@ -190,7 +196,7 @@ class AntibodyAgent(ContinuousSpaceAgent):
             if new_pos is not None and self is not None:
                 self.position = new_pos
         except Exception as e:
-            #print(e, self.unique_id)
+            print(e, self.unique_id)
             return
         
     def engage_virus(self,virus_to_engage) -> str:
@@ -204,19 +210,15 @@ class AntibodyAgent(ContinuousSpaceAgent):
 
 
         if virus_to_engage_dna in self.st_memory or virus_to_engage_dna in self.lt_memory : # antibody wins and kills the virus
-            #print('killed virus', virus_to_engage_dna, self.st_memory, self.lt_memory, self.health)
             virus_to_engage.remove()
             self.target = None
             return 'win'
 
         else : # ko for a few steps (can't move) AND stores virus dna in st+lt but if already has low health => dies
-            #print('beaten', self.health)
             self.health -= 1
-            #print(self.health)
 
             if self.health == 0:
                 self.remove()
-                self.model.schedule.remove(self)
                 return 'dead'
             
             
@@ -225,7 +227,6 @@ class AntibodyAgent(ContinuousSpaceAgent):
             self.ko_steps_left = self.ko_timeout
             self.target = self
 
-            print(self.st_memory, self.lt_memory)
             return 'ko'
 
 
@@ -244,8 +245,8 @@ class VirusAgent(ContinuousSpaceAgent):
         space,
         mutation_rate,
         duplication_rate,
+        position = (0, 0),
         dna = None,
-        position=(0, 0), 
         ):
         """Create a new Virus agent.
 
@@ -273,7 +274,6 @@ class VirusAgent(ContinuousSpaceAgent):
     def step(self):
         """Virus movement and duplication."""
         if self.random.random() < self.duplication_rate:
-            #print('duplicating', rand, self.duplication_rate, rand < self.duplication_rate)
             self.duplicate()
         self.move()
     
@@ -282,15 +282,17 @@ class VirusAgent(ContinuousSpaceAgent):
         if self is None or self.space is None:
             return
         
-        VirusAgent.create_agents(
+        duplicate = VirusAgent(
             self.model,
-            1,
             self.space,
-            position=self.position,
             mutation_rate=self.mutation_rate,
             duplication_rate=self.duplication_rate,
             dna = self.generate_dna(self.dna)
-        )[0]
+        )
+
+        duplicate.position = self.position
+        self.model.viruses_set.add(duplicate)
+
      
     def generate_dna(self, dna=None):
         """
@@ -332,4 +334,10 @@ class VirusAgent(ContinuousSpaceAgent):
                 except Exception as e:
                     print(e, self.unique_id)
                     return
-                
+        else: # delete supprimer remove
+            try :
+                new_pos = self.position + self.direction * self.speed
+                self.position = new_pos
+            except Exception as e:
+                print(e, self.unique_id)
+                return

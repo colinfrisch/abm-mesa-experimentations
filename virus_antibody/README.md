@@ -17,7 +17,7 @@ The global idea is to model how the imune system can struggle against new virus 
 4. **Duplication**: Antibodies and viruses can duplicate according to their duplication rate.
 
 
-![](virus_antibody.png)
+![](images/virus_antibody.png)
 
 ## Usage
 
