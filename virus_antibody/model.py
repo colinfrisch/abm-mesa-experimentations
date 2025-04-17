@@ -34,7 +34,7 @@ class VirusAntibodyModel(Model):
         height=100,
 
         # Antibody parameters
-        antibody_duplication_rate = 0,
+        antibody_duplication_rate = 0.01,
         antibody_sight_range=10,
         antibody_ko_timeout = 15,
         antibody_memory_capacity = 3,

@@ -182,8 +182,8 @@ class AntibodyAgent(ContinuousSpaceAgent):
                 else: # The antibody reached the virus
                     self.engage_virus(self.target)
             except Exception as e:
-                print(e, self.target.unique_id)
                 self.target = None
+                self.target.space = None
                 return
         
         else: # The target is not in the space anymore (it was killed by the antibody)
@@ -196,7 +196,6 @@ class AntibodyAgent(ContinuousSpaceAgent):
             if new_pos is not None and self is not None:
                 self.position = new_pos
         except Exception as e:
-            print(e, self.unique_id)
             return
         
     def engage_virus(self,virus_to_engage) -> str:
@@ -332,12 +331,10 @@ class VirusAgent(ContinuousSpaceAgent):
                     new_pos = self.position + self.direction * self.speed
                     self.position = new_pos
                 except Exception as e:
-                    print(e, self.unique_id)
                     return
         else: # delete supprimer remove
             try :
                 new_pos = self.position + self.direction * self.speed
                 self.position = new_pos
             except Exception as e:
-                print(e, self.unique_id)
                 return
