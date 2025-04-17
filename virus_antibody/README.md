@@ -2,6 +2,13 @@
 
 This model is a simulation of immune reaction declined as a confrontationn between antibody agents and virus agents. The results are quite interesting as the simulation can go both ways (virus win or antibodies win) with a little tweak in the base parameters.
 
+For example, with a given set of fixed parameters :
+| Virus mutation rate = 0.15 (antibodies win)      | Virus mutation rate = 0.2 (viruses win)          |
+|--------------------------------------------------|--------------------------------------------------|
+|  ![](images/antibodies_win.png)                  | ![](images/viruses_win.png)                      |
+
+
+
 The global idea is to model how the imune system can struggle against new virus but is able to adapt over time and beat a same virus if it comes back.
 
 
@@ -25,3 +32,9 @@ After cloning the repo and installing mesa on pip, run the application with :
 ```bash
     solara run app.py
 ```
+
+## A couple more of interesting cases
+
+| An interesting tendency inversion | high duplication + high mutation = both grow (more viruses) | high duplication + low mutation = both grow (more antibodies) |
+|---|---|---|
+| <img src="images/pattern.png" width="550"/> | <img src="images/grow_virus_wins.png" width="450"/> | <img src="images/grow_antibody_wins.png" width="450"/> |
