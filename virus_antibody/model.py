@@ -81,17 +81,15 @@ class VirusAntibodyModel(Model):
         # Statistics
         self.antibodies_killed = 0
         self.virus_killed = 0
-        self.running = True
-
-        
+        self.running = True        
 
          # Set up data collection
         model_reporters = {
                 "Antibodies" : lambda m: len(m.agents_by_type[AntibodyAgent]),
                 "Viruses": lambda m: len(m.agents_by_type[VirusAgent]),    
             }
-
-        self.datacollector = DataCollector(model_reporters)
+        
+        self.datacollector = DataCollector(model_reporters=model_reporters)
 
 
         # Set up the space
