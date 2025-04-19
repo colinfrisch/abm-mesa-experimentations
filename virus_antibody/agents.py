@@ -2,12 +2,13 @@
 Mesa implementation of Virus/Antibody model: Agents module.
 """
 
-import numpy as np
-from collections import deque
 import copy
 import os
 import sys
 import weakref
+from collections import deque
+
+import numpy as np
 
 sys.path.insert(0, os.path.abspath("../../mesa"))
 from mesa.experimental.continuous_space import ContinuousSpaceAgent
@@ -47,14 +48,11 @@ class AntibodyAgent(ContinuousSpaceAgent):
         self.memory_capacity = memory_capacity
 
         # Target & KO state
-        self.target = None         # will hold a weakref.ref or None
+        self.target = None  # will hold a weakref.ref or None
         self.ko_timeout = ko_timeout
         self.ko_steps_left = 0
 
     def step(self):
-        # Don’t do anything if we’ve already been removed from the space
-        """if self.space is None:
-            return"""
         if self is None:
             return
 
@@ -80,7 +78,8 @@ class AntibodyAgent(ContinuousSpaceAgent):
     def communicate(self) -> bool:
         agents, _ = self.space.get_agents_in_radius(self.position, self.sight_range)
         peers = [
-            a for a in agents
+            a
+            for a in agents
             if isinstance(a, AntibodyAgent) and a.unique_id != self.unique_id
         ]
         if not peers:
@@ -88,8 +87,7 @@ class AntibodyAgent(ContinuousSpaceAgent):
 
         for other in peers:
             to_share = [
-                dna for dna in self.st_memory
-                if dna and dna not in other.lt_memory
+                dna for dna in self.st_memory if dna and dna not in other.lt_memory
             ]
             if to_share:
                 other.st_memory.extend(to_share)
@@ -118,7 +116,7 @@ class AntibodyAgent(ContinuousSpaceAgent):
         self.model.antibodies_set.add(clone)
 
     def move(self):
-        # If we’ve been removed from the space, bail out
+        # If we've been removed from the space, bail out
         if getattr(self, "space", None) is None:
             return
 
@@ -139,10 +137,12 @@ class AntibodyAgent(ContinuousSpaceAgent):
 
         # Random walk if no target
         elif target is None:
-            perturb = np.array([
-                self.random.uniform(-0.5, 0.5),
-                self.random.uniform(-0.5, 0.5),
-            ])
+            perturb = np.array(
+                [
+                    self.random.uniform(-0.5, 0.5),
+                    self.random.uniform(-0.5, 0.5),
+                ]
+            )
             self.direction = self.direction + perturb
             norm = np.linalg.norm(self.direction)
             if norm > 0:
@@ -160,7 +160,6 @@ class AntibodyAgent(ContinuousSpaceAgent):
                 else:
                     self.engage_virus(target)
             else:
-                # Lost it
                 self.target = None
 
         if new_pos is not None:
@@ -214,7 +213,7 @@ class VirusAgent(ContinuousSpaceAgent):
         self.dna = dna if dna is not None else self.generate_dna()
 
     def step(self):
-        # If we’ve been removed from the space, don’t do anything
+        # If already removed from the space, don't do anything
         if getattr(self, "space", None) is None:
             return
         if self.random.random() < self.duplication_rate:
@@ -244,15 +243,16 @@ class VirusAgent(ContinuousSpaceAgent):
         return dna
 
     def move(self):
-        # If we’ve been removed from the space, bail out
         if getattr(self, "space", None) is None:
             return
 
         # Random walk
-        perturb = np.array([
-            self.random.uniform(-0.5, 0.5),
-            self.random.uniform(-0.5, 0.5),
-        ])
+        perturb = np.array(
+            [
+                self.random.uniform(-0.5, 0.5),
+                self.random.uniform(-0.5, 0.5),
+            ]
+        )
         self.direction = self.direction + perturb
         norm = np.linalg.norm(self.direction)
         if norm > 0:
