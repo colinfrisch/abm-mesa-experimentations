@@ -1,4 +1,4 @@
-# ABM Mesa Models
+# abm-mesa-experimentations
 
 A collection of agent-based models built with Mesa, a Python framework for agent-based modeling.
 
