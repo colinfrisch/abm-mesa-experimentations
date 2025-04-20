@@ -1,6 +1,7 @@
 import asyncio
 import logging
 from typing import Any, Dict, List, Tuple
+import contextlib
 
 class ModuleLLM:
     _batch_processors: Dict[Tuple, "BatchProcessor"] = {}
