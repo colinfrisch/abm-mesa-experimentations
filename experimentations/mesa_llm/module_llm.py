@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from typing import Any, Dict, List, Tuple
 import contextlib
 
@@ -13,7 +12,7 @@ class ModuleLLM:
         api_key: str,
         device: int = 0,
         max_batch: int = 16,
-        flush_interval: float = 0.05,
+        batch_process_interval: float = 0.05,
         max_queue_size: int = 1000,
     ):
         # config that really matters for deduping
@@ -24,14 +23,14 @@ class ModuleLLM:
         self.device = device
 
         # lazy loaded resources
-        self._pipeline = None  # e.g. HF pipeline or OpenRouter client
+        self._pipeline = None  # HF pipeline or OpenRouter client
 
         # batch processor is created once per unique config
         if self._config_key not in ModuleLLM._batch_processors:
             ModuleLLM._batch_processors[self._config_key] = BatchProcessor(
                 client=self,
                 max_batch=max_batch,
-                flush_interval=flush_interval,
+                batch_process_interval=batch_process_interval,
                 max_queue_size=max_queue_size,
             )
         self._batch: BatchProcessor = ModuleLLM._batch_processors[self._config_key]
@@ -80,22 +79,22 @@ class BatchProcessor:
         self,
         client: ModuleLLM,
         max_batch: int,
-        flush_interval: float,
+        batch_process_interval: float,
         max_queue_size: int,
     ):
         self.client = client
         self.max_batch = max_batch
-        self.flush_interval = flush_interval
+        self.batch_process_interval = batch_process_interval
         self.max_queue_size = max_queue_size
 
         # internal queue of (prompt, future, params)
         self._queue: List[Tuple[str, asyncio.Future, Dict[str, Any]]] = []
         self._lock = asyncio.Lock()
-        self._flush_event = asyncio.Event()
+        self._batch_process_event = asyncio.Event()
         self._closed = False
 
-        # start the flush loop
-        self._task = asyncio.create_task(self._flush_loop())
+        # start the batch_process loop
+        self._task = asyncio.create_task(self._batch_process_loop())
 
     async def enqueue(
         self,
@@ -103,45 +102,46 @@ class BatchProcessor:
         fut: asyncio.Future,
         params: Dict[str, Any],
     ) -> None:
-        """Add a request to the queue, or block if too full."""
+        """Add a request to the queue or block if too full."""
         async with self._lock:
             if self._closed:
                 raise RuntimeError("BatchProcessor is shut down.")
             if len(self._queue) >= self.max_queue_size:
-                # backpressure: wait for next flush
-                await self._flush_event.wait()
-                self._flush_event.clear()
+                
+                # if queue full, wait for next batch_process
+                await self._batch_process_event.wait()
+                self._batch_process_event.clear()
 
             self._queue.append((prompt, fut, params))
-            logging.debug(f"Enqueued prompt; queue size = {len(self._queue)}")
+            print(f"Enqueued prompt; queue size = {len(self._queue)}")
 
-            # trigger immediate flush if we hit batch size
+            # trigger immediate batch_process if we reached batch size
             if len(self._queue) >= self.max_batch:
-                self._flush_event.set()
+                self._batch_process_event.set()
 
-    async def _flush_loop(self) -> None:
-        """Flush periodically or when triggered."""
+    async def _batch_process_loop(self) -> None:
+        """batch_process periodically or when triggered."""
         try:
             while not self._closed:
                 # wait for either the interval or an explicit trigger
                 try:
-                    await asyncio.wait_for(self._flush_event.wait(), timeout=self.flush_interval)
+                    await asyncio.wait_for(self._batch_process_event.wait(), timeout=self.batch_process_interval)
                 except asyncio.TimeoutError:
                     pass
 
                 async with self._lock:
                     if self._queue:
-                        await self._flush_once()
+                        await self._batch_process_once()
                         # wake up any waiting enqueuers
-                        self._flush_event.clear()
-                        self._flush_event.set()
+                        self._batch_process_event.clear()
+                        self._batch_process_event.set()
         except asyncio.CancelledError:
-            # on shutdown, flush remaining
+            # on shutdown, batch_process remaining
             async with self._lock:
                 if self._queue:
-                    await self._flush_once()
+                    await self._batch_process_once()
 
-    async def _flush_once(self) -> None:
+    async def _batch_process_once(self) -> None:
         """Collect the batch, call LLM, and resolve futures."""
         batch = self._queue
         self._queue = []
@@ -154,13 +154,13 @@ class BatchProcessor:
             for fut, text in zip(futures, results):
                 fut.set_result(text)
         except Exception as e:
-            logging.exception("Error during batch generation")
+            print("Error during batch generation")
             for fut in futures:
                 if not fut.done():
                     fut.set_exception(e)
 
     async def shutdown(self) -> None:
-        """Cancel the loop and wait for it to finish flushing."""
+        """Cancel the loop and wait for it to finish batch_processing."""
         async with self._lock:
             self._closed = True
         self._task.cancel()
