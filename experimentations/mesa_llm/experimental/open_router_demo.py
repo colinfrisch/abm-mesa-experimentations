@@ -1,10 +1,8 @@
 
-
 import requests
 import json
 
-# Replace 'your_api_key_here' with your actual OpenRouter API key
-api_key = "..."
+api_key = "..." # OpenRouter
 
 headers = {
     "Authorization": f"Bearer {api_key}",

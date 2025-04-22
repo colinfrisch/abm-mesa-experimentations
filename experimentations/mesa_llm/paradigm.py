@@ -48,7 +48,8 @@ class Paradigm(ABC):
 
         self.action(plan, agent, model)
 
-    # ---------- DEFAULT HOOKS TO OVERRIDE IF NEEDED ----------
+    # Overridable methods
+
     def observe(self, agent, model) -> Observation:
         """Paradigm‑specific view"""
         neighbors = agent.space.get_agents_in_radius(agent.position, radius=1)
@@ -63,8 +64,9 @@ class Paradigm(ABC):
         """Decode each action dict and call ⟦model.apply_action()⟧."""
         for action in plan.actions:
             if action["tool"] not in self.tool_schema:
-                continue          # ignore illegal actions
+                continue 
             self.tool_schema[action["tool"]](agent, model, **action)
+            #model.apply_action() call with actions dict
 
 
 class ClassBasedParadigm(Paradigm):
@@ -83,9 +85,10 @@ class ClassBasedParadigm(Paradigm):
                 model.apply_action_eat(agent)
 
 class FunctionBasedParadigm(Paradigm):
-    def action(self, plan, agent, model):
+    @staticmethod
+    def action(plan, agent, model, tool_schema):
         for act in plan.actions:
-            fn = self.tool_schema.get(act["tool"])
-            if fn:                          # pure function
+            fn = tool_schema.get(act["tool"])
+            if fn:  # pure function
                 fn(model_state=model, agent_id=agent.unique_id, **act)
 
