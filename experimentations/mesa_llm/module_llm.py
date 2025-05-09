@@ -22,8 +22,7 @@ class ModuleLLM:
         self.api_key = api_key
         self.device = device
 
-        # lazy loaded resources
-        self._pipeline = None  # HF pipeline or OpenRouter client
+        self._pipeline = None  # HF pipeline or OpenRouter client (lazy loaded)
 
         # batch processor is created once per unique config
         if self._config_key not in ModuleLLM._batch_processors:

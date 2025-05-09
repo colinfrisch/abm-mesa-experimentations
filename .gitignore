@@ -2,9 +2,11 @@
 *.pyc
 *.DS_Store
 *.excalidraw
+*.docx
 
 # Folders
 __pycache__/
 
 # Files
 supp.ipynb
+archiSUPP.py
