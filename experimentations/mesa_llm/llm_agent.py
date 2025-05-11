@@ -3,14 +3,12 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from paradigm import ClassBasedParadigm, FunctionBasedParadigm
 from reasoning import CoTReasoning, ReActReasoning, ReWOOReasoning
+from memory import Memory
 
+# mock mesa classes 
 class Agent():
     pass
-class Memory():
-    pass
 class Model():
-    pass
-def reasoning_compatibility():
     pass
 
 model = Model()
