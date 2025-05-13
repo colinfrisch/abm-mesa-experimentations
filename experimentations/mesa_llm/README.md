@@ -5,7 +5,6 @@ All code examples here are not necessarily functionnal, they are mostly ideas fo
 **Project Structure**
 ```
 mesa-llm/
-llm_agent.py
 ├── experimental/     # Experimental features
 ├── proposal/         # Work around my GSoC application - accepted (proposal and proposal refining)    
 ├── files.py          # Code ideas for Mesa-LLM
